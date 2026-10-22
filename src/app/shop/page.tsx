@@ -3,10 +3,18 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import { Sparkles, ShoppingBag, Star, Search, Filter } from "lucide-react";
+import { Sparkles, ShoppingBag, Star, Search } from "lucide-react";
 
-// Product Database
-const PRODUCTS = [
+interface Product {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  rating: number;
+  image: string;
+}
+
+const PRODUCTS: Product[] = [
   {
     id: "1",
     name: "Classic Oxford Cotton Shirt",
@@ -42,24 +50,19 @@ const PRODUCTS = [
 ];
 
 export default function ShopPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [cartCount, setCartCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [cartCount, setCartCount] = useState<number>(0);
 
-  // Filter products based on search and category
   const filteredProducts = PRODUCTS.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || product.category ===ycinMatch(product.category, selectedCategory);
+    const matchesCategory = selectedCategory === "All" || product.category.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesCategory;
   });
 
-  function ycinMatch(cat: string, sel: string) {
-    return cat.toLowerCase() === sel.toLowerCase();
-  }
-
-  const handleAddToCart = (e: React.MouseEvent, productName: string) => {
-    e.preventDefault(); // Prevent opening product detail
-    setCartCount(prev => prev + 1);
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>, productName: string) => {
+    e.preventDefault();
+    setCartCount((prev) => prev + 1);
     alert(`"${productName}" added to cart successfully! 🛒`);
   };
 
@@ -68,7 +71,6 @@ export default function ShopPage() {
       <Navbar cartCount={cartCount} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        {/* Header Title */}
         <div className="mb-6">
           <h1 className="text-3xl font-black text-gray-900">Shop Collection</h1>
           <p className="text-sm text-gray-500 mt-1">Explore all apparel & try them on with Triow AI</p>
@@ -116,7 +118,6 @@ export default function ShopPage() {
                 href={`/product/${product.id}`}
                 className="group bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative"
               >
-                {/* AI Try-On Quick Button */}
                 <Link
                   href={`/try-on?item=${product.id}`}
                   onClick={(e) => e.stopPropagation()}
@@ -126,7 +127,6 @@ export default function ShopPage() {
                   <Sparkles className="w-4 h-4" />
                 </Link>
 
-                {/* Product Image */}
                 <div className="relative aspect-[4/5] bg-gray-100 rounded-2xl overflow-hidden mb-4">
                   <img
                     src={product.image}
@@ -135,7 +135,6 @@ export default function ShopPage() {
                   />
                 </div>
 
-                {/* Details */}
                 <div>
                   <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
                     <span>{product.category}</span>
@@ -149,7 +148,6 @@ export default function ShopPage() {
                   </h3>
                 </div>
 
-                {/* Price & Cart Button */}
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-50">
                   <span className="text-lg font-black text-gray-900">${product.price}</span>
                   <button
